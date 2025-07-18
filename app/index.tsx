@@ -1,68 +1,84 @@
 import React, { useState } from "react";
-import { View, ScrollView, Text, StyleSheet, TouchableWithoutFeedback, Image } from "react-native";
+import {
+  View,
+  ScrollView,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 
-const defaultImages = [
-  "https://placekitten.com/200/200",
-  "https://placebear.com/200/200",
-  "https://randomuser.me/api/portraits/men/1.jpg",
-  "https://randomuser.me/api/portraits/women/2.jpg",
-  "https://placekitten.com/201/200",
-  "https://placebear.com/201/200",
-  "https://randomuser.me/api/portraits/men/3.jpg",
-  "https://randomuser.me/api/portraits/women/4.jpg",
-  "https://placekitten.com/202/200",
+const mainImages = [
+  "https://simak.unismuh.ac.id/upload/mahasiswa/105841107722_.jpg",
+  "https://simak.unismuh.ac.id/upload/mahasiswa/10584108622_.jpg",
+  "https://simak.unismuh.ac.id/upload/mahasiswa/105841107922_.jpg",
+  "https://simak.unismuh.ac.id/upload/mahasiswa/105841108022_.jpg",
+  "https://simak.unismuh.ac.id/upload/mahasiswa/105841108122_.jpg",
+  "https://simak.unismuh.ac.id/upload/mahasiswa/105841108222_.jpg",
+  "https://simak.unismuh.ac.id/upload/mahasiswa/105841108322_.jpg",
+  "https://simak.unismuh.ac.id/upload/mahasiswa/105841108422_.jpg",
+  "https://simak.unismuh.ac.id/upload/mahasiswa/105841108522_.jpg",
+
 ];
 
-const alternateImages = [
-  "https://placekitten.com/200/201",
-  "https://placebear.com/200/201",
-  "https://randomuser.me/api/portraits/men/5.jpg",
-  "https://randomuser.me/api/portraits/women/6.jpg",
-  "https://placekitten.com/203/200",
-  "https://placebear.com/202/200",
-  "https://randomuser.me/api/portraits/men/7.jpg",
-  "https://randomuser.me/api/portraits/women/8.jpg",
-  "https://placekitten.com/204/200",
+const altImages = [
+  "https://simak.unismuh.ac.id/upload/mahasiswa/105841107722_.jpg",
+  "https://simak.unismuh.ac.id/upload/mahasiswa/10584108622_.jpg",
+  "https://simak.unismuh.ac.id/upload/mahasiswa/105841107922_.jpg",
+  "https://simak.unismuh.ac.id/upload/mahasiswa/105841108022_.jpg",
+  "https://simak.unismuh.ac.id/upload/mahasiswa/105841108122_.jpg",
+  "https://simak.unismuh.ac.id/upload/mahasiswa/105841108222_.jpg",
+  "https://simak.unismuh.ac.id/upload/mahasiswa/105841108322_.jpg",
+  "https://simak.unismuh.ac.id/upload/mahasiswa/105841108422_.jpg",
+  "https://simak.unismuh.ac.id/upload/mahasiswa/105841108522_.jpg",
+
 ];
 
-export default function GalleryGrid() {
+export default function ImageGrid3x3() {
   const [imageStates, setImageStates] = useState(
-    new Array(9).fill(null).map(() => ({ flipped: false, zoom: 1 }))
+    Array(9).fill(null).map(() => ({ flipped: false, scale: 1 }))
   );
 
-  const toggleImage = (index: number) => {
-    setImageStates((previous) =>
-      previous.map((data, i) =>
+  const handlePress = (index: number) => {
+    setImageStates((prev) =>
+      prev.map((item, i) =>
         i === index
           ? {
-              flipped: !data.flipped,
-              zoom: Math.min(data.zoom + 0.2, 2),
+              flipped: !item.flipped,
+              scale: Math.min(item.scale * 1.2, 2),
             }
-          : data
+          : item
       )
     );
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.wrapper}>
-      <Text style={styles.title}>AHMAD YANI{"\n"}NIM 105841107922</Text>
-      <View style={styles.gridBox}>
-        {defaultImages.map((url, index) => {
-          const activeImage = imageStates[index].flipped
-            ? alternateImages[index]
-            : url;
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.header}>AHMAD YANI{"\n"}NIM 105841107922</Text>
+
+      <View style={styles.grid}>
+        {mainImages.map((main, index) => {
+          const isFlipped = imageStates[index].flipped;
+          const scale = imageStates[index].scale;
+          const imageSource = isFlipped ? altImages[index] : main;
+
           return (
-            <TouchableWithoutFeedback key={index} onPress={() => toggleImage(index)}>
-              <View style={styles.cellBox}>
-                <Image
-                  source={{ uri: activeImage }}
-                  style={[
-                    styles.picture,
-                    { transform: [{ scale: imageStates[index].zoom }] },
-                  ]}
-                />
-              </View>
-            </TouchableWithoutFeedback>
+            <TouchableOpacity
+              key={index}
+              onPress={() => handlePress(index)}
+              activeOpacity={0.8}
+              style={styles.cell}
+            >
+              <Image
+                source={{ uri: imageSource }}
+                style={[
+                  styles.image,
+                  {
+                    transform: [{ scale }],
+                  },
+                ]}
+              />
+            </TouchableOpacity>
           );
         })}
       </View>
@@ -71,35 +87,35 @@ export default function GalleryGrid() {
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
+  container: {
     flexGrow: 1,
     alignItems: "center",
-    paddingVertical: 30,
+    paddingVertical: 24,
   },
-  title: {
+  header: {
     fontSize: 18,
-    marginBottom: 20,
     textAlign: "center",
+    marginBottom: 20,
+    fontWeight: "600",
     color: "#444",
-    fontStyle: "italic",
   },
-  gridBox: {
+  grid: {
     width: 330,
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
   },
-  cellBox: {
+  cell: {
     width: 110,
     height: 110,
-    margin: 3,
+    margin: 2,
     justifyContent: "center",
     alignItems: "center",
   },
-  picture: {
+  image: {
     width: 100,
     height: 100,
     borderRadius: 12,
-    backgroundColor: "#ccc",
+    backgroundColor: "#ddd",
   },
 });
