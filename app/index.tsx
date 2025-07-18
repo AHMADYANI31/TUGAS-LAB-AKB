@@ -8,7 +8,7 @@ import {
   Image,
 } from "react-native";
 
-// Gambar utama mahasiswa
+// 9 Gambar utama mahasiswa
 const mainImages = [
   "https://simak.unismuh.ac.id/upload/mahasiswa/105841107722_.jpg",
   "https://simak.unismuh.ac.id/upload/mahasiswa/10584108622_.jpg",
@@ -21,7 +21,7 @@ const mainImages = [
   "https://simak.unismuh.ac.id/upload/mahasiswa/105841108522_.jpg",
 ];
 
-// Gambar alternatif (placeholder / bisa diganti dengan versi edit)
+// 9 Gambar alternatif (flip)
 const altImages = [
   "https://picsum.photos/id/1015/100",
   "https://picsum.photos/id/1016/100",
@@ -35,14 +35,15 @@ const altImages = [
 ];
 
 export default function ImageGrid3x3() {
-  // State per gambar: apakah flipped dan skala perbesaran
+  // State: flipped & zoom scale per gambar
   const [imageStates, setImageStates] = useState(
-    Array(9)
-      .fill(null)
-      .map(() => ({ flipped: false, scale: 1 }))
+    Array(9).fill(null).map(() => ({
+      flipped: false,
+      scale: 1,
+    }))
   );
 
-  // Fungsi saat gambar ditekan
+  // Saat gambar ditekan: flip + zoom
   const handlePress = (index: number) => {
     setImageStates((prev) =>
       prev.map((item, i) =>
@@ -58,13 +59,14 @@ export default function ImageGrid3x3() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>AHMAD YANI{"\n"}NIM 105841107922</Text>
+      <Text style={styles.header}>
+        AHMAD YANI{"\n"}NIM 105841107922
+      </Text>
 
       <View style={styles.grid}>
         {mainImages.map((main, index) => {
-          const isFlipped = imageStates[index].flipped;
-          const scale = imageStates[index].scale;
-          const imageSource = isFlipped ? altImages[index] : main;
+          const { flipped, scale } = imageStates[index];
+          const imageSource = flipped ? altImages[index] : main;
 
           return (
             <TouchableOpacity
@@ -75,12 +77,8 @@ export default function ImageGrid3x3() {
             >
               <Image
                 source={{ uri: imageSource }}
-                style={[
-                  styles.image,
-                  {
-                    transform: [{ scale }],
-                  },
-                ]}
+                style={[styles.image, { transform: [{ scale }] }]}
+                resizeMode="cover"
               />
             </TouchableOpacity>
           );
@@ -90,18 +88,20 @@ export default function ImageGrid3x3() {
   );
 }
 
+// Style untuk layout & elemen
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     alignItems: "center",
     paddingVertical: 24,
+    backgroundColor: "#f9f9f9",
   },
   header: {
     fontSize: 18,
     textAlign: "center",
     marginBottom: 20,
     fontWeight: "600",
-    color: "#444",
+    color: "#333",
   },
   grid: {
     width: 330,
