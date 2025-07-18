@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View, Text } from "react-native";
+import { View, ScrollView, Text, StyleSheet, TouchableWithoutFeedback, Image } from "react-native";
 
-const mainImages = [
+const defaultImages = [
   "https://placekitten.com/200/200",
   "https://placebear.com/200/200",
   "https://randomuser.me/api/portraits/men/1.jpg",
@@ -13,7 +13,7 @@ const mainImages = [
   "https://placekitten.com/202/200",
 ];
 
-const altImages = [
+const alternateImages = [
   "https://placekitten.com/200/201",
   "https://placebear.com/200/201",
   "https://randomuser.me/api/portraits/men/5.jpg",
@@ -25,106 +25,81 @@ const altImages = [
   "https://placekitten.com/204/200",
 ];
 
-export default function ImageGrid() {
-  // state: [{isAlt: boolean, scale: number}]
-  const [states, setStates] = useState(
-    Array(9)
-      .fill(0)
-      .map(() => ({ isAlt: false, scale: 1 }))
+export default function GalleryGrid() {
+  const [imageStates, setImageStates] = useState(
+    new Array(9).fill(null).map(() => ({ flipped: false, zoom: 1 }))
   );
 
-  const handlePress = (idx: number) => {
-    setStates((prev) =>
-      prev.map((item, i) => {
-        if (i !== idx) return item;
-        let newScale = item.scale * 1.2;
-        if (newScale > 2) newScale = 2;
-        return {
-          isAlt: !item.isAlt,
-          scale: newScale,
-        };
-      })
+  const toggleImage = (index: number) => {
+    setImageStates((previous) =>
+      previous.map((data, i) =>
+        i === index
+          ? {
+              flipped: !data.flipped,
+              zoom: Math.min(data.zoom + 0.2, 2),
+            }
+          : data
+      )
     );
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={{
-        fontSize: 16,
-        marginBottom: 16,
-        textAlign: "center",
-        color: "#666",
-        fontFamily: "LibertinusMono-Regular",
-      }}>
-          AHMAD YANI
-          NIM 105841107922
-        </Text>
-      <View style={styles.grid}>
-        {mainImages.map((img, idx) => (
-          <TouchableOpacity
-            key={idx}
-            activeOpacity={0.8}
-            onPress={() => handlePress(idx)}
-            style={styles.cell}
-          >
-            <Image
-              source={{ uri: states[idx].isAlt ? altImages[idx] : img }}
-              style={[
-                styles.image,
-                {
-                  transform: [{ scale: states[idx].scale }],
-                },
-              ]}
-            />
-          </TouchableOpacity>
-        ))}
+    <ScrollView contentContainerStyle={styles.wrapper}>
+      <Text style={styles.title}>AHMAD YANI{"\n"}NIM 105841107922</Text>
+      <View style={styles.gridBox}>
+        {defaultImages.map((url, index) => {
+          const activeImage = imageStates[index].flipped
+            ? alternateImages[index]
+            : url;
+          return (
+            <TouchableWithoutFeedback key={index} onPress={() => toggleImage(index)}>
+              <View style={styles.cellBox}>
+                <Image
+                  source={{ uri: activeImage }}
+                  style={[
+                    styles.picture,
+                    { transform: [{ scale: imageStates[index].zoom }] },
+                  ]}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+          );
+        })}
       </View>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: 20,
-        }}
-      />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
     flexGrow: 1,
-    justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    paddingVertical: 30,
   },
-  header: {
-    fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 4,
+  title: {
+    fontSize: 18,
+    marginBottom: 20,
     textAlign: "center",
+    color: "#444",
+    fontStyle: "italic",
   },
-  subHeader: {
-    fontSize: 16,
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  grid: {
+  gridBox: {
     width: 330,
     flexDirection: "row",
     flexWrap: "wrap",
+    justifyContent: "center",
   },
-  cell: {
+  cellBox: {
     width: 110,
     height: 110,
+    margin: 3,
     justifyContent: "center",
     alignItems: "center",
-    margin: 2,
   },
-  image: {
+  picture: {
     width: 100,
     height: 100,
-    borderRadius: 10,
-    backgroundColor: "#eee",
+    borderRadius: 12,
+    backgroundColor: "#ccc",
   },
 });
